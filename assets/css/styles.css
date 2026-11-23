@@ -1,0 +1,684 @@
+:root {
+    --primary: #6366f1;
+    --primary-light: #818cf8;
+    --accent: #06b6d4;
+    --bg-base: #0a0a0f;
+    --bg-card: rgba(15, 23, 42, 0.58);
+    --bg-card-hover: rgba(22, 33, 58, 0.76);
+    --border-subtle: rgba(148, 163, 184, 0.12);
+    --border-hover: rgba(99, 102, 241, 0.35);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --accent-sky: #38bdf8;
+    --accent-sky-bg: rgba(56, 189, 248, 0.1);
+    --accent-meli: #ffe600;
+    --accent-meli-soft: #fde047;
+    --accent-meli-bg: rgba(253, 224, 71, 0.1);
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-base);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* ===================================================================== */
+/* FONDO ANIMADO (GRADIENTE FLOTANTE + GRILLA + PARTÍCULAS)              */
+/* ===================================================================== */
+.bg-gradient {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.bg-gradient::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.09) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+    animation: bgFloat 20s ease-in-out infinite;
+}
+
+@keyframes bgFloat {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    33% {
+        transform: translate(2%, -2%) rotate(1deg);
+    }
+
+    66% {
+        transform: translate(-1%, 1%) rotate(-1deg);
+    }
+}
+
+.grid-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+}
+
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ===================================================================== */
+/* CONTENEDOR PRINCIPAL                                                  */
+/* ===================================================================== */
+.content {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ===================================================================== */
+/* TARJETAS BENTO CON EFECTO GLASSMORPHISM Y SPOTLIGHT                   */
+/* ===================================================================== */
+.bento-card {
+    position: relative;
+    background: var(--bg-card);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.3s ease,
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.55);
+}
+
+/* Capa de brillo radial que sigue el cursor */
+.bento-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(520px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+            rgba(99, 102, 241, 0.14),
+            transparent 42%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.bento-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+    box-shadow: 0 18px 40px -15px rgba(0, 0, 0, 0.75);
+}
+
+.bento-card:hover::before {
+    opacity: 1;
+}
+
+.bento-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* ===================================================================== */
+/* SECCIÓN 1: PERFIL PERSONAL                                            */
+/* ===================================================================== */
+.profile-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .profile-layout {
+        flex-direction: row;
+        align-items: center;
+        text-align: left;
+        gap: 2rem;
+    }
+}
+
+.avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+    padding: 3px;
+    border-radius: 9999px;
+    /* background: linear-gradient(135deg, #38bdf8, #818cf8, #fde047); */
+    background: conic-gradient(from 0deg, var(--primary), var(--accent), var(--primary));
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.22);
+    transition: transform 0.35s ease;
+}
+
+
+
+.bento-card:hover .avatar-wrapper {
+    transform: scale(1.03);
+}
+
+.avatar-img {
+    width: 112px;
+    height: 112px;
+    border-radius: 9999px;
+    object-fit: cover;
+    display: block;
+    background-color: #18181b;
+    border: 3px solid var(--bg-base);
+}
+
+@media (min-width: 640px) {
+    .avatar-img {
+        width: 124px;
+        height: 124px;
+    }
+}
+
+.profile-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 8px;
+}
+
+@media (min-width: 640px) {
+    .profile-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+
+.profile-name {
+    font-size: 1.60rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+    line-height: 1.15;
+    font-family: var(--font-mono);
+}
+
+/* Pill complementaria violeta sin dot */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.95rem;
+    border-radius: 9999px;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    font-weight: 500;
+    background: rgba(139, 92, 246, 0.14);
+    color: #c4b5fd;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+    white-space: nowrap;
+}
+
+.profile-bio {
+    color: var(--text-secondary);
+    font-size: 0.90rem;
+    line-height: 1.65;
+    text-align: justify;
+}
+
+/* ===================================================================== */
+/* ENCABEZADOS DE SECCIÓN Y ETIQUETAS                                    */
+/* ===================================================================== */
+.section-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.section-label-group {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.icon-box {
+    width: 34px;
+    height: 34px;
+    border-radius: 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-box svg {
+    width: 18px;
+    height: 18px;
+}
+
+.icon-box-amber {
+    background: var(--accent-meli-bg);
+    border: 1px solid rgba(253, 224, 71, 0.25);
+    color: var(--accent-meli-soft);
+}
+
+.icon-box-sky {
+    background: var(--accent-sky-bg);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: var(--accent-sky);
+}
+
+.icon-box-sapphire {
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(96, 165, 250, 0.28);
+    color: #60a5fa;
+}
+
+.icon-box-rose {
+    background: rgba(244, 63, 94, 0.12);
+    border: 1px solid rgba(251, 113, 133, 0.28);
+    color: #fb7185;
+}
+
+.icon-box-teal {
+    background: rgba(20, 184, 166, 0.12);
+    border: 1px solid rgba(45, 212, 191, 0.28);
+    color: #2dd4bf;
+}
+
+.icon-box-indigo {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.28);
+    color: #34d399;
+}
+
+.icon-box-violet {
+    background: rgba(139, 92, 246, 0.12);
+    border: 1px solid rgba(167, 139, 250, 0.28);
+    color: #a78bfa;
+}
+
+.icon-box-emerald {
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(129, 140, 248, 0.28);
+    color: #818cf8;
+}
+
+.section-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+}
+
+/* Pill complementaria verde esmeralda sin dot */
+.period-pill {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    padding: 0.32rem 0.85rem;
+    border-radius: 9999px;
+    background: rgba(16, 185, 129, 0.12);
+    color: #6ee7b7;
+    border: 1px solid rgba(52, 211, 153, 0.28);
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.14);
+}
+
+/* ===================================================================== */
+/* SECCIÓN 2: PUESTO LABORAL ACTUAL (MERCADO LIBRE)                      */
+/* ===================================================================== */
+.job-title {
+    font-size: 1.20rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+    font-family: var(--font-mono);
+}
+
+.meli-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-meli-soft);
+    border-bottom: 1px solid rgba(253, 224, 71, 0.35);
+    padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.meli-link:hover {
+    color: var(--accent-meli);
+    border-bottom-color: var(--accent-meli);
+}
+
+.meli-link svg {
+    width: 15px;
+    height: 15px;
+    transition: transform 0.2s ease;
+}
+
+.meli-link:hover svg {
+    transform: translate(2px, -2px);
+}
+
+.job-description {
+    color: var(--text-secondary);
+    font-size: 0.90rem;
+    margin-bottom: 1.15rem;
+}
+
+/* ===================================================================== */
+/* TAGS DE TECNOLOGÍAS                                                   */
+/* ===================================================================== */
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.tech-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.28rem 0.65rem;
+    border-radius: 0.5rem;
+    background: rgba(99, 102, 241, 0.08);
+    /* background: rgba(24, 24, 27, 0.92); */
+    color: #d4d4d8;
+    /* border: 1px solid rgba(255, 255, 255, 0.08); */
+    border: 1px solid rgba(99, 102, 241, 0.15);
+}
+
+/* ===================================================================== */
+/* SECCIÓN 3: GRID DE PROYECTOS (CARDS)                                  */
+/* ===================================================================== */
+.projects-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.view-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    padding: 0.3rem 0.65rem;
+    border-radius: 0.55rem;
+    border: 1px solid transparent;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.view-all-link:hover {
+    color: var(--text-primary);
+    background: rgba(15, 23, 42, 0.75);
+    border-color: var(--border-subtle);
+}
+
+.view-all-link svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+}
+
+.view-all-link:hover svg {
+    transform: translateX(3px);
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 700px) {
+    .projects-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.project-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 1.4rem;
+}
+
+.project-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+
+.project-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.project-icon-link {
+    color: var(--text-secondary);
+    padding: 0.35rem;
+    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.project-icon-link:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.project-icon-link svg {
+    width: 17px;
+    height: 17px;
+}
+
+.project-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.45rem;
+}
+
+.project-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+}
+
+/* ===================================================================== */
+/* FOOTER CON ICONOS SOCIALES                                            */
+/* ===================================================================== */
+.site-footer {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.social-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 0.85rem;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease, color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.social-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.social-btn:hover {
+    transform: translateY(-3px);
+}
+
+/* Hover específico GitHub */
+.social-btn--github:hover {
+    color: #f8fafc;
+    border-color: rgba(248, 250, 252, 0.4);
+    background: rgba(30, 41, 59, 0.9);
+    box-shadow: 0 8px 20px -6px rgba(248, 250, 252, 0.2);
+}
+
+/* Hover específico LinkedIn (tonos azules) */
+.social-btn--linkedin:hover {
+    color: #38bdf8;
+    border-color: rgba(10, 102, 194, 0.65);
+    background: rgba(10, 102, 194, 0.18);
+    box-shadow: 0 8px 22px -6px rgba(56, 189, 248, 0.38);
+}
+
+/* Hover específico Correo (tonos verde esmeralda) */
+.social-btn--email:hover {
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.65);
+    background: rgba(16, 185, 129, 0.16);
+    box-shadow: 0 8px 22px -6px rgba(52, 211, 153, 0.35);
+}
+
+.footer-copy {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ===================================================================== */
+/* ANIMACIÓN DE ENTRADA                                                  */
+/* ===================================================================== */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.08s;
+}
+
+.delay-2 {
+    animation-delay: 0.16s;
+}
+
+.delay-3 {
+    animation-delay: 0.24s;
+}
